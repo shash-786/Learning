@@ -20,9 +20,12 @@
 # strings where the string length is 2 or more and the first
 # and last chars of the string are the same.
 # Note: python does not have a ++ operator, but += works.
-def match_ends(words):
-  # +++your code here+++
-  return
+def match_ends(words: list) -> int:
+  count: int = 0
+  for word in words:
+    if len(word) >= 2 and word[0] == word[-1]:
+      count += 1
+  return count
 
 
 # B. front_x
@@ -32,9 +35,21 @@ def match_ends(words):
 # ['xanadu', 'xyz', 'aardvark', 'apple', 'mix']
 # Hint: this can be done by making 2 lists and sorting each of them
 # before combining them.
-def front_x(words):
-  # +++your code here+++
-  return
+def front_x(words: list[str]) -> list[str]:
+  owords: list[str] = []
+  xwords: list[str] = []
+  ans: list[str] = []
+
+  for word in words:
+    if word[0] == 'x':
+      xwords.append(word)
+    else:
+      owords.append(word)
+  
+  owords.sort()
+  xwords.sort()
+  ans = xwords + owords
+  return ans
 
 
 
@@ -44,9 +59,12 @@ def front_x(words):
 # e.g. [(1, 7), (1, 3), (3, 4, 5), (2, 2)] yields
 # [(2, 2), (1, 3), (3, 4, 5), (1, 7)]
 # Hint: use a custom key= function to extract the last element form each tuple.
+
+def extract_last_element(tup: tuple):
+  return tup[-1]
+
 def sort_last(tuples):
-  # +++your code here+++
-  return
+  return sorted(tuples, key=extract_last_element)
 
 
 # Simple provided test() function used in main() to print
