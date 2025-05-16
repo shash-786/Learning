@@ -30,6 +30,21 @@ def list_special_files(directory: str):
         specialFiles.append(os.path.abspath(entry.path))
   return specialFiles
 
+def copy(srcs: list[str], dest: str):
+  command: str = "cp "
+  for src in srcs:
+    command += src + " "
+  command += dest
+
+  (status, output) = subprocess.getstatusoutput(cmd= command)
+  if status:
+    sys.stderr.write(output)
+    sys.exit(status)
+  
+def list(dir: str):
+  entries: list[os.DirEntry] = os.scandir(dir)
+  for entry in entries:
+    print(entry.name, end=' ')
 
 def main():
   # This basic command line argument parsing code is provided.
@@ -64,7 +79,8 @@ def main():
   dir: str = args[0]
   specialFiles: list[str] = list_special_files(dir)
   if todir != '':
-    pass
+    copy(specialFiles, todir)
+    list(todir)
   elif tozip != '':
     pass
   else:
