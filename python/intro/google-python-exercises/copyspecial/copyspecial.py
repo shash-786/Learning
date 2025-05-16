@@ -17,7 +17,18 @@ import subprocess
 
 # +++your code here+++
 # Write functions and modify main() to call them
-
+def list_special_files(directory: str):
+  entries: list[os.DirEntry] = os.scandir(directory)
+  specialFiles: list[str] = []
+  for entry in entries:
+    if entry.is_dir():
+      specialFiles.extend(list_special_files(entry.path))
+    else:
+      name: str = entry.name
+      pat: str = r'.*?__[a-zA-Z]+__.*?'
+      if re.search(pattern=pat, string=name):
+        specialFiles.append(os.path.abspath(entry.path))
+  return specialFiles
 
 
 def main():
@@ -50,6 +61,15 @@ def main():
 
   # +++your code here+++
   # Call your functions
+  dir: str = args[0]
+  specialFiles: list[str] = list_special_files(dir)
+  if todir != '':
+    pass
+  elif tozip != '':
+    pass
+  else:
+    for file in specialFiles:
+      print(file)
 
 if __name__ == '__main__':
   main()
