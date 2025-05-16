@@ -64,7 +64,7 @@ def extract_names(filename):
   # Extract all the data tuples with a findall()
   # each tuple is: (rank, boy-name, girl-name)
   tuples = re.findall(r'<td>(\d+)</td><td>(\w+)</td>\<td>(\w+)</td>', text)
-  #print(tuples)
+  print(tuples)
 
   # Store data into a dict using each name as a key and that
   # name's rank number as the value.

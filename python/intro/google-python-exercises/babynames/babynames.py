@@ -34,15 +34,54 @@ Suggested milestones for incremental development:
  -Fix main() to use the extract_names list
 """
 
-def extract_names(filename):
+def extract_year(content: str):
+  pat: str = r'<h3\s*.*>[A-Za-z ]+(\d+)</h3>'
+  year: str = re.search(pat, content)
+  if year:
+    return year.group(1)
+  else:
+    print("unable to extract year")
+    exit()
+  
+def extract_names(content: str):
+  names: list[str] = []
+  html_pattern: str = r'<td>(\d+)</td><td>(.*?)</td><td>(.*?)</td>'
+  iterable = re.finditer(html_pattern, content)
+  for match in iterable:
+    if match:
+      rank: int = match.group(1)
+      name1: str = match.group(2)
+      name2: str = match.group(3)
+
+      if len(name1) < len(name2):
+        names.append(name1 + " " + rank)
+      else:
+        names.append(name2 + " " + rank)
+  return names
+
+def extract_info(filename):
   """
   Given a file name for baby.html, returns a list starting with the year string
   followed by the name-rank strings in alphabetical order.
   ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
   """
   # +++your code here+++
-  return
+  ans: str = []
+  name_ranked: str = []
+  with open(filename, 'r') as file:
+    reader: str = file.read()
+    year: str = extract_year(reader)
+    '''
+    tuples = re.findall(r'<td>(\d+)</td><td>(\w+)</td>\<td>(\w+)</td>', reader)
+    print(tuples)
+    (1, 'boyname', 'girlname')
+    '''
+    ans.append(year)
+    
+    name_ranked = extract_names(reader)
+    name_ranked.sort()
 
+  return ans + name_ranked
 
 def main():
   # This command-line parsing code is provided.
@@ -63,6 +102,11 @@ def main():
   # +++your code here+++
   # For each filename, get the names, then either print the text output
   # or write it to a summary file
+  ans: list[str] = extract_info("baby2006.html")
+  for word in ans:
+    pass
+    #print(word)
+
 
 if __name__ == '__main__':
   main()

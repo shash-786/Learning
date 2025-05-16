@@ -38,12 +38,43 @@ print_words() and print_top().
 """
 
 import sys
-
 # +++your code here+++
 # Define print_words(filename) and print_top(filename) functions.
 # You could write a helper utility function that reads a file
 # and builds and returns a word/count dict for it.
 # Then print_words() and print_top() can just call the utility function.
+def get_frequency(filename: str):
+  dict = {}
+  with open(filename, 'r', encoding='utf-8') as file:
+    for line in file:
+      words = line.split()
+      for word in words:
+        word = word.strip().lower()
+        if word not in dict:
+          dict[word] = 1
+        else:
+          dict[word] += 1
+    return dict
+
+  return 
+
+def print_words (filename: str):
+  word_count = get_frequency(filename)
+  words = sorted(word_count.keys())
+  for word in words[:20]:
+    print(word, word_count[word])
+
+
+def getLast(tup):
+  return tup[-1]
+
+def print_top (filename: str):
+  dict = get_frequency(filename)
+  top_words = sorted(dict.items(), key= getLast, reverse= True)
+  
+  for i in range(20):
+    print(top_words[i])
+  return 
 
 ###
 

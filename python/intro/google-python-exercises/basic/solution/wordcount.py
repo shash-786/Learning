@@ -69,7 +69,7 @@ def print_words(filename):
   """Prints one per line '<word> <count>' sorted by word for the given file."""
   word_count = word_count_dict(filename)
   words = sorted(word_count.keys())
-  for word in words:
+  for word in words[:20]:
     print(word, word_count[word])
 
 
