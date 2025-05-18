@@ -9,7 +9,9 @@
 import os
 import re
 import sys
-import urllib
+import urllib.request
+
+from bs4 import BeautifulSoup
 
 """Logpuzzle exercise
 Given an apache logfile, find the puzzle urls and download the images.
@@ -20,42 +22,75 @@ Here's what a puzzle url looks like:
 
 
 def read_urls(filename):
-  """Returns a list of the puzzle urls from the given log file,
-  extracting the hostname from the filename itself.
-  Screens out duplicate urls and returns the urls sorted into
-  increasing order."""
-  # +++your code here+++
-  
+    """
+        Returns a list of the puzzle urls from the given log file,
+        extracting the hostname from the filename itself.
+        Screens out duplicate urls and returns the urls sorted into
+    increasing order.
+    """
+    urls: list[str] = []
+    with open(file=filename, mode="r") as file:
+        content: str = file.read()
+        baseurl: str = "http://code.google.com"
+        pat: str = r'"GET (.*?puzzle.*?) HTTP/1.0"'
 
-def download_images(img_urls, dest_dir):
-  """Given the urls already in the correct order, downloads
-  each image into the given directory.
-  Gives the images local filenames img0, img1, and so on.
-  Creates an index.html in the directory
-  with an img tag to show each local image file.
-  Creates the directory if necessary.
-  """
-  # +++your code here+++
+        paths: list[str] = re.findall(pat, content)
+        for path in paths:
+            url = baseurl + path
+            urls.append(url)
+    return urls
+
+
+def download_images(urls, dest_dir):
+    """
+    Given the urls already in the correct order, downloads
+    each image into the given directory.
+    Gives the images local filenames img0, img1, and so on.
+    Creates an index.html in the directory
+    with an img tag to show each local image file.
+    Creates the directory if necessary.
+    """
+    soup = BeautifulSoup("<html><body></body></html>", "html.parser")
+    body = soup.body
+
+    if body is None:
+        sys.stderr.write("html body is None")
+        sys.exit(1)
+
+    file = open("index.html", "w")
+
+    os.makedirs(dest_dir, exist_ok=True)
+    for index, url in enumerate(urls):
+        filepath = "./" + dest_dir + "/img" + str(index) + ".jpg"
+        urllib.request.urlretrieve(url, filepath)
+        img_tag = soup.new_tag("img", src=filepath)
+        body.append(img_tag)
+
+    file.write(str(soup.prettify()))
+    file.close()
+
+    print("Successfully created index.html in the root directory.")
 
 
 def main():
-  args = sys.argv[1:]
+    args = sys.argv[1:]
 
-  if not args:
-    print('usage: [--todir dir] logfile ')
-    sys.exit(1)
+    if not args:
+        print("usage: [--todir dir] logfile ")
+        sys.exit(1)
 
-  todir = ''
-  if args[0] == '--todir':
-    todir = args[1]
-    del args[0:2]
+    todir = ""
+    if args[0] == "--todir":
+        todir = args[1]
+        del args[0:2]
 
-  img_urls = read_urls(args[0])
+    img_urls = read_urls(args[0])
+    img_urls = sorted(img_urls)
+    if todir:
+        download_images(img_urls, todir)
+    else:
+        print("\n".join(img_urls))
 
-  if todir:
-    download_images(img_urls, todir)
-  else:
-    print('\n'.join(img_urls))
 
-if __name__ == '__main__':
-  main()
+if __name__ == "__main__":
+    main()
