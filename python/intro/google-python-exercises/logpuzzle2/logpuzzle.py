@@ -6,20 +6,21 @@
 # Google's Python Class
 # http://code.google.com/edu/languages/google-python-class/
 
-import os
-import re
 import sys
+import os
 import urllib.request
+import re
+
+from bs4 import BeautifulSoup
 
 """Logpuzzle exercise
 Given an apache logfile, find the puzzle urls and download the images.
 
 Here's what a puzzle url looks like:
-10.254.254.28 - - [06/Aug/2007:00:13:48 -0700] "GET /~foo/puzzle-bar-aaab.jpg HTTP/1.0" 302 528 "-" "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6"
+10.254.254.29 - - [06/Aug/2007:00:12:19 -0700] "GET /edu/languages/google-python-class/images/puzzle/p-bija-baei.jpg HTTP/1.0" 200 22950 "-" "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.0.12) Gecko/20070508 Firefox/1.5.0.12"
 """
 
 
-# LAB(begin solution)
 def url_sort_key(url):
     """Used to order the urls in increasing order by 2nd word if present."""
     match = re.search(r"-(\w+)-(\w+)\.\w+", url)
@@ -62,37 +63,38 @@ def read_urls(filename):
                     url_dict["http://" + host + path] = 1
 
         return sorted(url_dict.keys(), key=url_sort_key)
-    # LAB(end solution)
 
 
-def download_images(img_urls, dest_dir):
-    """Given the urls already in the correct order, downloads
+def download_images(urls, dest_dir):
+    """
+    Given the urls already in the correct order, downloads
     each image into the given directory.
     Gives the images local filenames img0, img1, and so on.
     Creates an index.html in the directory
     with an img tag to show each local image file.
     Creates the directory if necessary.
     """
-    # +++your code here+++
-    # LAB(begin solution)
-    if not os.path.exists(dest_dir):
-        os.makedirs(dest_dir)
+    soup = BeautifulSoup("<html><body></body></html>", "html.parser")
+    body = soup.body
 
-    index = open(os.path.join(dest_dir, "index.html"), "w")
-    index.write("<html><body>\n")
+    if body is None:
+        sys.stderr.write("html body is None")
+        sys.exit(1)
 
-    i = 0
-    for img_url in img_urls:
-        local_name = "img%d" % i + ".jpg"
-        print("Retrieving...", img_url)
-        urllib.request.urlretrieve(img_url, os.path.join(dest_dir, local_name))
+    file = open("index.html", "w")
 
-        index.write('<img src="%s">' % (local_name,))
-        i += 1
+    os.makedirs(dest_dir, exist_ok=True)
+    for index, url in enumerate(urls):
+        filepath = "./" + dest_dir + "/img" + str(index) + ".jpg"
+        print("Retrieving image for url " + url)
+        urllib.request.urlretrieve(url, filepath)
+        img_tag = soup.new_tag("img", src=filepath)
+        body.append(img_tag)
 
-    index.write("\n</body></html>\n")
-    index.close()
-    # LAB(end solution)
+    file.write(str(soup.prettify()))
+    file.close()
+
+    print("Successfully created index.html in the root directory.")
 
 
 def main():
@@ -108,7 +110,7 @@ def main():
         del args[0:2]
 
     img_urls = read_urls(args[0])
-
+    img_urls = sorted(img_urls, key=url_sort_key)
     if todir:
         download_images(img_urls, todir)
     else:
