@@ -1,14 +1,6 @@
-load("@bazel_tools//tools/build_defs/cc:defs.bzl", "cc_library", "cc_binary")
-
-cc_library (
-    name = "libraryCode",
-    srcs = ["LibraryCode.cc"],
-    hdrs = ["LibraryCode.h"],
-    visibility = ["//visibility:public"],
+module (
+    name = "bazel_gtest_example",
+    version = "1.0.0",
 )
 
-cc_binary (
-    name = "myApp",
-    srcs = ["main.cc"],
-    deps = [":libraryCode"],
-)
+bazel_dep(name = "googletest", version = "1.14.0")
