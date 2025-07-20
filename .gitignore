@@ -1,2 +1,5 @@
 *.out
 .venv
+bazel-*
+.vscode
+MODULE.bazel.lock
