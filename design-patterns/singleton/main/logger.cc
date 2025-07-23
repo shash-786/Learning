@@ -1,11 +1,18 @@
 #include "logger.h"
 #include <ctime>
 
+
+Logger Logger::m_instance;
+
 Logger::Logger() {
     this->m_pstream = fopen("logs.txt", "w");
     if (this->m_pstream == nullptr) {
         std::cerr << "Error: Could not open logs.txt file for writing." << std::endl;
     }
+}
+
+Logger& Logger::GetInstance() {
+    return m_instance;
 }
 
 void Logger::write_log(const char *logs) {
