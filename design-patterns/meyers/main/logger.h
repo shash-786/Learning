@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <memory>
+#include <mutex>
 
 class Logger {
     struct deleter{
@@ -15,6 +16,7 @@ class Logger {
 
     Logger();
    ~Logger();
+   static std::mutex m_mut;
     
     public:
     Logger(const Logger&) = delete;

@@ -26,6 +26,6 @@ void Logger::setTag(std::string tag) {
 }
 
 Logger::~Logger() {
-    std::cout << "desrtcutor called" << std::endl;
+    std::cout << "destructor called" << std::endl;
     fclose(this->m_pstream);
 }
