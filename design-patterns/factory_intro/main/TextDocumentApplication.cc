@@ -1,6 +1,6 @@
 #include "TextDocumentApplication.h"
 #include "TextDocument.h"
 
-Document* TextDocumentApplication::Create() {
-    return new TextDocument(); 
+DocumentPtr TextDocumentApplication::Create() {
+    return std::make_unique<TextDocument>();
 }

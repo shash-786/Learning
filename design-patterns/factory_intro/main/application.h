@@ -3,12 +3,12 @@
 
 class Application {
 private:
-    Document* m_pdocument;
+    DocumentPtr m_pdocument;
 public:
     void New();
     void Open();
     void Save();
-    virtual Document* Create() {
+    virtual DocumentPtr Create() {
         return nullptr;
     }
 };
