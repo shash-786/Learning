@@ -120,4 +120,5 @@ void abstract_factory_instantiate(DBFactory *factory) {
     delete p_conn;
     delete p_command;
     delete cursor;
+    delete factory;
 }
